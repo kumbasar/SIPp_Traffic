@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- register to call -->
+
+<scenario name="register_to_call">
+
+  
+  <send retrans="500">
+      <![CDATA[
+        REGISTER sip:[field0] SIP/2.0
+        Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch];rport
+        From: <sip:[field1]@[field2]>;tag=[pid]SIPpTag00[call_number]
+        To: <sip:[field1]@[field2]>
+        Call-ID: [call_id]
+        CSeq: [cseq] REGISTER
+        User-Agent:  Asterisk PBX
+        Max-Forwards: 70
+        Expires: 82000
+        Contact: <sip:[field1]@[local_ip]:[local_port]>;transport=[transport]
+        Event: registration
+        Content-Length: 0
+        	  
+      ]]>
+   
+  </send>
+  <recv response="100" optional="true" />
+
+
+	  <recv response="200" optional="true" next="register-done"/>
+	
+	  <recv response="407" auth="true"/>
+
+	  <send retrans="500">
+	    <![CDATA[
+        REGISTER sip:[field0] SIP/2.0
+        Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch][pid];rport
+        From: <sip:[field1]@[field2]>;tag=[pid]SIPpTag11[call_number]
+        To: <sip:[field1]@[field2]>
+        Call-ID: [call_id]
+        CSeq: [cseq] REGISTER
+        User-Agent:  Asterisk PBX
+        Max-Forwards: 70
+	[field3]
+        Expires: 82000
+        Contact: <sip:[field1]@[local_ip]:[local_port]>;transport=[transport]
+        Event: registration
+        Content-Length: 0
+    
+	    ]]>
+	  </send>
+  <recv response="100" optional="true" />
+
+            <recv response="200" />       
+       <label id="register-done"/>
+</scenario>
+
+
+
+
